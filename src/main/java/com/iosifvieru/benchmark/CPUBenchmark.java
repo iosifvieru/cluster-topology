@@ -1,28 +1,34 @@
 package com.iosifvieru.benchmark;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class CPUBenchmark {
-    private Integer iterations = 10_000;
-    private Integer repeats = 10;
+    private final Integer iterations;
+    private final Integer repeats;
 
     public CPUBenchmark(Integer iterations, Integer repeats){
         this.iterations = iterations;
         this.repeats = repeats;
     }
 
+    public CPUBenchmark(){
+        this.iterations = 10_000;
+        this.repeats = 10;
+    }
+
     private void workload(){
-        for(int i = 0; i < 1000; i++){
-            var x = Math.PI * Math.pow(2, i);
+        double sum = 0;
+        int it = 1000;
+        for(int i = 0; i < it; i++){
+            sum += Math.PI * Math.pow(2, i);
         }
 
-        for(int i = 0; i < 1000; i++){
-            var x = i / Math.PI;
+        for(int i = 0; i < it; i++){
+            sum += i / Math.PI;
         }
 
-        for(int i = 0; i < 1000; i++){
-            var x = i / (Math.PI * Math.pow(2, i));
+        for(int i = 0; i < it; i++){
+            sum += i / (Math.PI * Math.pow(2, i));
         }
     }
 
@@ -41,13 +47,13 @@ public class CPUBenchmark {
         }
 
         Long sum = results.stream().reduce(0L, Long::sum);
+        double sum_seconds = sum / 1E9;
         Double average_duration = (double) ((sum / this.repeats)) / 1E9;
 
         double ops = Double.NaN;
         if (average_duration > 0){
             ops = this.iterations / average_duration;
         }
-
-        System.out.println("Iterations: " + this.iterations + " Average Duration: " + average_duration + " Ops: " + ops);
+        System.out.printf("total time: %.3f, iterations: %d, avg duration: %.4f, OPS: %.3f\n", sum_seconds, this.iterations, average_duration, ops);
     }
 }
